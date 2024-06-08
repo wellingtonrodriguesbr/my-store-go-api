@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"fmt"
 	"my-store-api-go/model"
 	"my-store-api-go/usecase"
 	"net/http"
@@ -122,10 +123,10 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 				Message: "Product not found",
 			}
 		
-		ctx.JSON(http.StatusNotFound, response)
-		return
-	}
-}
+				ctx.JSON(http.StatusNotFound, response)
+				return
+			}
+		}
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -133,4 +134,57 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, nil)
+}
+
+func (p *productController) UpdateProduct(ctx *gin.Context) {
+	id := ctx.Param("productId")
+
+	if id == "" {
+		response := model.Response{
+			Message: "Product id not found",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+
+	if err != nil {
+		response := model.Response{
+			Message: "Failed to convert product id",
+		}
+
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var product model.Product
+	err = ctx.BindJSON(&product)
+
+	if err != nil {
+		fmt.Println(err)
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	updatedProduct, err := p.productUseCase.UpdateProduct(productId, product) 
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			response := model.Response {
+				Message: "Product not found",
+			}
+		
+				ctx.JSON(http.StatusNotFound, response)
+				return
+			}
+		}
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, updatedProduct)
 }
