@@ -17,7 +17,7 @@ func NewProductRepository(connection *sql.DB) ProductRepository {
 }
 
 func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
-	query := "SELECT id, product_name, price FROM products"
+	query := "SELECT id, name, price FROM products"
 	rows, err := pr.connection.Query(query)
 
 	if err != nil {
@@ -51,7 +51,7 @@ func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
 func (pr *ProductRepository) CreateProduct(product model.Product) (int, error) {
 	var id int
 
-	query, err := pr.connection.Prepare("INSERT INTO products" + "(product_name, price)" + " VALUES ($1, $2) RETURNING id")
+	query, err := pr.connection.Prepare("INSERT INTO products" + "(name, price)" + " VALUES ($1, $2) RETURNING id")
 
 	if err != nil {
 		fmt.Println(err)
@@ -92,4 +92,30 @@ func (pr *ProductRepository) GetProductById(id int) (*model.Product, error) {
 	query.Close()
 
 	return &product, nil
+}
+
+func (pr *ProductRepository) DeleteProduct(id int) (error) {
+	query, err := pr.connection.Prepare("DELETE FROM products WHERE id = $1")
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	var product model.Product
+
+	err = query.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price,)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println(err)
+			return err
+		}
+
+		return err
+	}
+
+	query.Close()
+
+	return nil
 }
