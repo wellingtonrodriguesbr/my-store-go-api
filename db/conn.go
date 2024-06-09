@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	host = "go_db"
-	port = 5432
-	user = "docker"
+	host     = "localhost"
+	port     = 5432
+	user     = "docker"
 	password = "docker"
-	db_name = "my-store-go-pg"
+	db_name  = "my-store-go-pg"
 )
 
 func ConnectDB() (*sql.DB, error) {

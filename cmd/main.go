@@ -1,10 +1,8 @@
 package main
 
 import (
-	"my-store-api-go/controller"
 	"my-store-api-go/db"
-	"my-store-api-go/repository"
-	"my-store-api-go/usecase"
+	"my-store-api-go/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,15 +15,7 @@ func main() {
 		panic(err)
 	}
 
-	productRepo := repository.NewProductRepository(dbConnection)
-	productUseCase := usecase.NewProductUseCase(productRepo)
-	productController := controller.NewProductController(productUseCase)
-
-	server.GET("/products", productController.GetProducts)
-	server.GET("/products/:productId", productController.GetProductById)
-	server.POST("/products", productController.CreateProduct)
-	server.PATCH("/products/:productId", productController.UpdateProduct)
-	server.DELETE("/products/:productId", productController.DeleteProduct)
+	routes.ProductRoutes(server, dbConnection)
 
 	server.Run(":8000")
 }
