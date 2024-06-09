@@ -40,7 +40,7 @@ func (p *productController) CreateProduct(ctx *gin.Context) {
 		return
 	}
 
-	insertedProduct, err := p.productUseCase.CreateProduct(product) 
+	insertedProduct, err := p.productUseCase.CreateProduct(product)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -73,7 +73,7 @@ func (p *productController) GetProductById(ctx *gin.Context) {
 		return
 	}
 
-	product, err := p.productUseCase.GetProductById(productId) 
+	product, err := p.productUseCase.GetProductById(productId)
 
 	if product == nil {
 		response := model.Response{
@@ -82,7 +82,6 @@ func (p *productController) GetProductById(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, response)
 		return
 	}
-
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -115,18 +114,18 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 		return
 	}
 
-	err = p.productUseCase.DeleteProduct(productId) 
+	err = p.productUseCase.DeleteProduct(productId)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			response := model.Response {
+			response := model.Response{
 				Message: "Product not found",
 			}
-		
-				ctx.JSON(http.StatusNotFound, response)
-				return
-			}
+
+			ctx.JSON(http.StatusNotFound, response)
+			return
 		}
+	}
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
@@ -168,18 +167,18 @@ func (p *productController) UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
-	updatedProduct, err := p.productUseCase.UpdateProduct(productId, product) 
+	updatedProduct, err := p.productUseCase.UpdateProduct(productId, product)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			response := model.Response {
+			response := model.Response{
 				Message: "Product not found",
 			}
-		
-				ctx.JSON(http.StatusNotFound, response)
-				return
-			}
+
+			ctx.JSON(http.StatusNotFound, response)
+			return
 		}
+	}
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)

@@ -7,7 +7,7 @@ import (
 )
 
 type ProductRepository struct {
-	connection * sql.DB
+	connection *sql.DB
 }
 
 func NewProductRepository(connection *sql.DB) ProductRepository {
@@ -28,7 +28,7 @@ func (pr *ProductRepository) GetProducts() ([]model.Product, error) {
 	var productList []model.Product
 	var productObj model.Product
 
-	for rows.Next(){
+	for rows.Next() {
 		err = rows.Scan(
 			&productObj.ID,
 			&productObj.Name,
@@ -79,7 +79,7 @@ func (pr *ProductRepository) GetProductById(id int) (*model.Product, error) {
 
 	var product model.Product
 
-	err = query.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price,)
+	err = query.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -94,7 +94,7 @@ func (pr *ProductRepository) GetProductById(id int) (*model.Product, error) {
 	return &product, nil
 }
 
-func (pr *ProductRepository) DeleteProduct(id int) (error) {
+func (pr *ProductRepository) DeleteProduct(id int) error {
 	query, err := pr.connection.Prepare("DELETE FROM products WHERE id = $1")
 
 	if err != nil {
@@ -104,7 +104,7 @@ func (pr *ProductRepository) DeleteProduct(id int) (error) {
 
 	var product model.Product
 
-	err = query.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price,)
+	err = query.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
